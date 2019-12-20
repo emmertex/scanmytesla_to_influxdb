@@ -30,6 +30,7 @@ def smt2i(filename):
         line = 0
         items = 0
         headers = []
+        joinedstring = ""
         for row in reader:
             if line == 0:
                 items = len(row) - 1
@@ -55,16 +56,20 @@ def smt2i(filename):
                     print("broken row")
                 if itemid > 1:
                     string += " {}".format(int((datetime.timestamp(dt) * 1000) + (int(row[0]))))
-                    #print (string)
-                    httpheaders = { 'Content-type': 'application/octet-stream', 'Accept': 'text/plain' }
-                    response = iclient.request("write",'POST', {'db':influxdbname, 'precision':'ms'}, string.encode('utf-8'), 204, httpheaders)
-                    #print (response)
+                    joinedstring += string + "\n"
         
             line += 1
             processed += 1
-            if (processed % 100 == 0):
-                print ("Processed {} rows in {} seconds\r".format(processed, datetime.timestamp(datetime.now()) - starttime), end="")
-
+            if (processed % 1000 == 0):
+                #print (joinedstring)
+                httpheaders = { 'Content-type': 'application/octet-stream', 'Accept': 'text/plain' }
+                response = iclient.request("write",'POST', {'db':influxdbname, 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
+                joinedstring = ""
+                #print (response)
+                print ("Processed {} rows in {} seconds\n\r".format(processed, datetime.timestamp(datetime.now()) - starttime), end="")
+        
+        httpheaders = { 'Content-type': 'application/octet-stream', 'Accept': 'text/plain' }
+        response = iclient.request("write",'POST', {'db':influxdbname, 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
         print ("\r\nCompleted {} rows in {} seconds".format(processed, datetime.timestamp(datetime.now()) - starttime))
 
 if __name__ == "__main__":
