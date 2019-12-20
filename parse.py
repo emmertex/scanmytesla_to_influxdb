@@ -66,7 +66,7 @@ def smt2i(filename):
                 response = iclient.request("write",'POST', {'db':influxdbname, 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
                 joinedstring = ""
                 #print (response)
-                print ("Processed {} rows in {} seconds\n\r".format(processed, datetime.timestamp(datetime.now()) - starttime), end="")
+                print ("Processed {} rows in {} seconds\r".format(processed, datetime.timestamp(datetime.now()) - starttime), end="")
         
         httpheaders = { 'Content-type': 'application/octet-stream', 'Accept': 'text/plain' }
         response = iclient.request("write",'POST', {'db':influxdbname, 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
