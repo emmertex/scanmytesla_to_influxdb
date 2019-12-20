@@ -44,7 +44,7 @@ def smt2i(filename):
                 try:
                     firstitem = True
                     for item in row:
-                        if not (item == "") and not (item == "Infinity"):
+                        if not (item == "") and not (item == "Infinity") and not (item == "NaN"):
                             if firstitem:
                                 string += "tesla {}={}".format(headers[itemid], item)
                                 firstitem = False
