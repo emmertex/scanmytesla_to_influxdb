@@ -1,0 +1,1 @@
+# Place the log files you want automatically imported in this folder

@@ -1,0 +1,1 @@
+# This is where files that are automatically imported from the logs folder get moved
