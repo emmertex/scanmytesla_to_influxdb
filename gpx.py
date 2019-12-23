@@ -19,15 +19,11 @@ except:
     print ("Please install influxdb library")
     print ("  pip3 install influxdb")
     exit()  
+import config
 
 def gpx2i(filename):
-    influxdbname = "SMT"
-    influxdbip = "localhost"
-    influxdbport = 8086
-    influxdbuser = ""
-    influxdbpass = ""
 
-    iclient = InfluxDBClient(influxdbip, influxdbport, influxdbuser, influxdbpass, influxdbname)
+    iclient = InfluxDBClient(config.influxdbip, config.influxdbport, config.influxdbuser, config.influxdbpass, config.influxdbname)
 
 
     gpx_file = open(filename, 'r')
@@ -44,7 +40,7 @@ def gpx2i(filename):
                 dt = int((point.time - datetime(1970, 1, 1, tzinfo=pytz.utc)).total_seconds()) * 1000
                 string += "track lat={},lon={},ele={} {}\n".format(point.latitude, point.longitude, point.elevation, dt)
             httpheaders = { 'Content-type': 'application/octet-stream', 'Accept': 'text/plain' }
-            response = iclient.request("write",'POST', {'db':influxdbname, 'precision':'ms'}, string.encode('utf-8'), 204, httpheaders)
+            response = iclient.request("write",'POST', {'db':config.influxdbname, 'precision':'ms'}, string.encode('utf-8'), 204, httpheaders)
             print (response)
    
 

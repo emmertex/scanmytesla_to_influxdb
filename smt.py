@@ -12,15 +12,11 @@ except:
     print ("Please install influxdb library")
     print ("  pip3 install influxdb")
     exit()   
+import config
 
 def smt2i(filename):
-    influxdbname = "SMT"
-    influxdbip = "localhost"
-    influxdbport = 8086
-    influxdbuser = ""
-    influxdbpass = ""
 
-    iclient = InfluxDBClient(influxdbip, influxdbport, influxdbuser, influxdbpass, influxdbname)
+    iclient = InfluxDBClient(config.influxdbip, config.influxdbport, config.influxdbuser, config.influxdbpass, config.influxdbname)
 
     processed = 0
 
@@ -71,13 +67,13 @@ def smt2i(filename):
             if (processed % 1000 == 0):
                 #print (joinedstring)
                 httpheaders = { 'Content-type': 'application/octet-stream', 'Accept': 'text/plain' }
-                response = iclient.request("write",'POST', {'db':influxdbname, 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
+                response = iclient.request("write",'POST', {'db':config.influxdbname, 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
                 joinedstring = ""
                 #print (response)
                 print ("Processed {} rows in {} seconds\r".format(processed, datetime.timestamp(datetime.now()) - starttime), end="")
         
         httpheaders = { 'Content-type': 'application/octet-stream', 'Accept': 'text/plain' }
-        response = iclient.request("write",'POST', {'db':influxdbname, 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
+        response = iclient.request("write",'POST', {'db':config.influxdbname, 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
         print ("\r\nCompleted {} rows in {} seconds".format(processed, datetime.timestamp(datetime.now()) - starttime))
 
 if __name__ == "__main__":

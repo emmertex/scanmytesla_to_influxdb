@@ -1,10 +1,10 @@
 import os
-from parse import smt2i
+from smt import smt2i
 from gpx import gpx2i
 import shutil
 
 for file in os.listdir("./logs"):
-    
+
     if file.endswith(".gpx"):
         filename = os.path.join("./logs", file)
         print ("Running {} ".format(filename))
