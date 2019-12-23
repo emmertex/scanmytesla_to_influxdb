@@ -1,9 +1,17 @@
+import sys
+if sys.version_info[0] < 3:
+    print ("Please run again using Python 3")
+    exit()
 import os
 import time
-import sys
 import csv
 from datetime import datetime
-from influxdb import InfluxDBClient, SeriesHelper
+try:
+    from influxdb import InfluxDBClient, SeriesHelper
+except:
+    print ("Please install influxdb library")
+    print ("  pip3 install influxdb")
+    exit()   
 
 def smt2i(filename):
     influxdbname = "SMT"
