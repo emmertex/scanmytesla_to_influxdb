@@ -14,17 +14,21 @@ except:
     exit()   
 import config
 
-def smt2i(filename):
+def smt2i(filename, cid):
 
-    iclient = InfluxDBClient(config.influxdbip, config.influxdbport, config.influxdbuser, config.influxdbpass, config.influxdbname)
+    iclient = InfluxDBClient(config.influxdbip[cid], config.influxdbport[cid], config.influxdbuser[cid], config.influxdbpass[cid], config.influxdbname[cid])
 
     processed = 0
 
-    name = filename.split(" ")
-    named = name[1]
-    name = name[2].split(".")
-    namet = name[0]
-    dt = (datetime.strptime(named + ' ' + namet, '%Y-%m-%d %H-%M-%S'))
+    try:
+        name = filename.split(" ")
+        named = name[1]
+        name = name[2].split(".")
+        namet = name[0]
+        dt = (datetime.strptime(named + ' ' + namet, '%Y-%m-%d %H-%M-%S'))
+    except:
+        print("Aborted: Badly formed filename")
+        return -1
 
     starttime = datetime.timestamp(datetime.now())
     
@@ -67,16 +71,20 @@ def smt2i(filename):
             if (processed % 1000 == 0):
                 #print (joinedstring)
                 httpheaders = { 'Content-type': 'application/octet-stream', 'Accept': 'text/plain' }
-                response = iclient.request("write",'POST', {'db':config.influxdbname, 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
+                response = iclient.request("write",'POST', {'db':config.influxdbname[cid], 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
                 joinedstring = ""
                 #print (response)
                 print ("Processed {} rows in {} seconds\r".format(processed, datetime.timestamp(datetime.now()) - starttime), end="")
         
         httpheaders = { 'Content-type': 'application/octet-stream', 'Accept': 'text/plain' }
-        response = iclient.request("write",'POST', {'db':config.influxdbname, 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
+        response = iclient.request("write",'POST', {'db':config.influxdbname[cid], 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
         print ("\r\nCompleted {} rows in {} seconds".format(processed, datetime.timestamp(datetime.now()) - starttime))
 
 if __name__ == "__main__":
-    smt2i(sys.argv[1])
+    if len(sys.argv) > 2:
+        smt2i(sys.argv[1], int(sys.argv[2]))
+    else:
+        print ("Database not selected, using index 0")
+        smt2i(sys.argv[1], 0)
 
 

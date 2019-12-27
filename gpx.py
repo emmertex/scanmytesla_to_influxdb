@@ -21,9 +21,9 @@ except:
     exit()  
 import config
 
-def gpx2i(filename):
+def gpx2i(filename, cid):
 
-    iclient = InfluxDBClient(config.influxdbip, config.influxdbport, config.influxdbuser, config.influxdbpass, config.influxdbname)
+    iclient = InfluxDBClient(config.influxdbip[cid], config.influxdbport[cid], config.influxdbuser[cid], config.influxdbpass[cid], config.influxdbname[cid])
 
 
     gpx_file = open(filename, 'r')
@@ -40,9 +40,13 @@ def gpx2i(filename):
                 dt = int((point.time - datetime(1970, 1, 1, tzinfo=pytz.utc)).total_seconds()) * 1000
                 string += "track lat={},lon={},ele={} {}\n".format(point.latitude, point.longitude, point.elevation, dt)
             httpheaders = { 'Content-type': 'application/octet-stream', 'Accept': 'text/plain' }
-            response = iclient.request("write",'POST', {'db':config.influxdbname, 'precision':'ms'}, string.encode('utf-8'), 204, httpheaders)
+            response = iclient.request("write",'POST', {'db':config.influxdbname[cid], 'precision':'ms'}, string.encode('utf-8'), 204, httpheaders)
             print (response)
    
 
 if __name__ == "__main__":
-    gpx2i(sys.argv[1])
+    if len(sys.argv) > 2:
+        gpx2i(sys.argv[1], int(sys.argv[2]))
+    else:
+        print ("Database not selected, using index 0")
+        gpx2i(sys.argv[1], 0)
