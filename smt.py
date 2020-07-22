@@ -71,13 +71,13 @@ def smt2i(filename, cid):
             if (processed % 1000 == 0):
                 #print (joinedstring)
                 httpheaders = { 'Content-type': 'application/octet-stream', 'Accept': 'text/plain' }
-                response = iclient.request("write",'POST', {'db':config.influxdbname[cid], 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
+                response = iclient.request("write",'POST', {'db':config.influxdbname[cid], 'precision':'ms'}, joinedstring.encode('utf-8'), expected_response_code=204, headers=httpheaders)
                 joinedstring = ""
                 #print (response)
                 print ("Processed {} rows in {} seconds\r".format(processed, datetime.timestamp(datetime.now()) - starttime), end="")
         
         httpheaders = { 'Content-type': 'application/octet-stream', 'Accept': 'text/plain' }
-        response = iclient.request("write",'POST', {'db':config.influxdbname[cid], 'precision':'ms'}, joinedstring.encode('utf-8'), 204, httpheaders)
+        response = iclient.request("write",'POST', {'db':config.influxdbname[cid], 'precision':'ms'}, joinedstring.encode('utf-8'), expected_response_code=204, headers=httpheaders)
         print ("\r\nCompleted {} rows in {} seconds".format(processed, datetime.timestamp(datetime.now()) - starttime))
 
 if __name__ == "__main__":
