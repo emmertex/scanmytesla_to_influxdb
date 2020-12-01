@@ -40,7 +40,7 @@ def gpx2i(filename, cid):
                 dt = int((point.time - datetime(1970, 1, 1, tzinfo=pytz.utc)).total_seconds()) * 1000
                 string += "track lat={},lon={},ele={} {}\n".format(point.latitude, point.longitude, point.elevation, dt)
             httpheaders = { 'Content-type': 'application/octet-stream', 'Accept': 'text/plain' }
-            response = iclient.request("write",'POST', {'db':config.influxdbname[cid], 'precision':'ms'}, string.encode('utf-8'), 204, httpheaders)
+            response = iclient.request("write",'POST', {'db':config.influxdbname[cid], 'precision':'ms'}, string.encode('utf-8'), expected_response_code=204, headers=httpheaders)
             print (response)
    
 
